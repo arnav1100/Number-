@@ -10,11 +10,10 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
       color: #fff;
-      overflow-x: hidden;
     }
     .container {
       max-width: 600px;
-      margin: 60px auto;
+      margin: 40px auto;
       padding: 30px;
       background: rgba(255, 255, 255, 0.05);
       border: 2px solid #ff004f;
@@ -25,23 +24,19 @@
       text-align: center;
       color: #ff004f;
       font-size: 2.5rem;
-      margin-bottom: 5px;
     }
     .quote {
       text-align: center;
-      font-size: 1rem;
+      color: #aaa;
       margin-bottom: 30px;
-      color: #ccc;
-      font-style: italic;
     }
     input, button {
       width: 100%;
-      padding: 15px;
-      margin-top: 15px;
-      font-size: 1.1rem;
+      padding: 12px;
+      margin: 10px 0;
       border: none;
       border-radius: 10px;
-      outline: none;
+      font-size: 1rem;
     }
     input {
       background: #222;
@@ -52,75 +47,131 @@
       background: #ff004f;
       color: white;
       cursor: pointer;
-      transition: background 0.3s ease;
     }
     button:hover {
       background: #e60047;
     }
-    .result-box {
-      margin-top: 25px;
-      padding: 15px;
-      border-radius: 10px;
+    .result-box, .history-box {
       background: #111;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 10px;
       border: 1px solid #ff004f;
     }
     .footer {
-      margin-top: 40px;
       text-align: center;
-      font-size: 0.9rem;
+      margin-top: 40px;
       color: #aaa;
+      font-size: 0.9rem;
     }
     .footer a {
       color: #ff004f;
       text-decoration: none;
     }
-    .history-box {
-      margin-top: 15px;
-      background: #1a1a1a;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px dashed #555;
-      font-size: 0.95rem;
-    }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>CRACKER 1.0</h1>
-    <div class="quote">"Break the pattern. Sniper the system. – <strong>ARNAV</strong>"</div><input id="period" type="number" placeholder="Enter Current Period Number (e.g. 880)">
-<input id="currentResult" type="number" placeholder="Enter result number of this period">
-<button onclick="predict()">🔍 Predict Next</button>
+    <div class="quote">"Break the pattern. Sniper the system. – <strong>ARNAV</strong>"</div><div id="setupSection">
+  <input id="startPeriod" type="number" placeholder="Enter Current Period Number (e.g. 880)">
+  <div id="resultsContainer"></div>
+  <button onclick="generateFields()">Submit</button>
+</div>
 
-<div class="result-box" id="output">Prediction will appear here...</div>
-<div class="history-box" id="showHistory"></div>
+<div id="mainSection" class="hidden">
+  <div id="predictionSection">
+    <p><strong>Prediction:</strong> Wait for next input...</p>
+    <input id="periodInput" type="number" placeholder="Enter Period Number">
+    <div id="predictedBox"></div>
+    <button onclick="generatePrediction()">Get Prediction</button>
+  </div>
+
+  <div id="hitMissSection" class="hidden">
+    <button onclick="recordResult('hit')">✅ HIT</button>
+    <button onclick="recordResult('miss')">❌ MISS</button>
+    <input id="actualResult" type="number" placeholder="Enter Actual Result">
+  </div>
+
+  <div class="result-box" id="output">Prediction will appear here...</div>
+  <div class="history-box" id="history">History will appear here...</div>
+</div>
 
 <div class="footer">
-  🔥 Made by <a href="https://t.me/ARNAV_1100" target="_blank">@ARNAV_1100</a><br>
-  📢 Join the army: <a href="https://t.me/+fKHabYVx_shkMDk1" target="_blank">CRACKER Channel</a>
+  🔥 By <a href="https://t.me/ARNAV_1100">@ARNAV_1100</a> | 📢 Join: <a href="https://t.me/+fKHabYVx_shkMDk1">CRACKER Channel</a>
 </div>
 
   </div>  <script>
     let history = [];
+    let predictedPeriod = null;
+    let lastPrediction = '';
 
-    function predict() {
-      const result = parseInt(document.getElementById('currentResult').value);
-      const period = parseInt(document.getElementById('period').value);
-      if (isNaN(result) || isNaN(period)) return alert("Enter valid inputs");
+    function generateFields() {
+      const period = parseInt(document.getElementById('startPeriod').value);
+      if (isNaN(period)) return alert("Enter valid period");
 
-      history.push(result);
+      const container = document.getElementById('resultsContainer');
+      container.innerHTML = '';
+
+      for (let i = period - 20; i < period; i++) {
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.id = `r${i}`;
+        input.placeholder = `Result of ${i}`;
+        container.appendChild(input);
+      }
+
+      const submitBtn = document.createElement('button');
+      submitBtn.textContent = "✅ Save & Start";
+      submitBtn.onclick = () => {
+        for (let i = period - 20; i < period; i++) {
+          const val = parseInt(document.getElementById(`r${i}`).value);
+          if (isNaN(val)) return alert(`Missing value at ${i}`);
+          history.push(val);
+        }
+        document.getElementById('setupSection').classList.add('hidden');
+        document.getElementById('mainSection').classList.remove('hidden');
+        updateHistory();
+      };
+      container.appendChild(submitBtn);
+    }
+
+    function generatePrediction() {
+      const period = parseInt(document.getElementById('periodInput').value);
+      if (isNaN(period)) return alert("Enter valid period");
+      predictedPeriod = period;
+
+      const last = history[history.length - 1];
+      let prediction = '—';
+      if ([0, 1, 5, 8, 9].includes(last)) prediction = 'SMALL';
+      if ([2, 3, 4, 6, 7].includes(last)) prediction = 'BIG';
+      lastPrediction = prediction;
+
+      document.getElementById('output').innerHTML = `<strong>Prediction for ${period}:</strong> ${prediction}`;
+      document.getElementById('predictedBox').innerHTML = `<strong>Based on last result:</strong> ${last}`;
+      document.getElementById('hitMissSection').classList.remove('hidden');
+    }
+
+    function recordResult(status) {
+      const actual = parseInt(document.getElementById('actualResult').value);
+      if (isNaN(actual)) return alert("Enter actual result");
+
+      history.push(actual);
       if (history.length > 20) history.shift();
 
-      let prediction = '—';
-      if ([0, 1, 5, 8, 9].includes(result)) prediction = 'SMALL';
-      if ([2, 3, 4, 6, 7].includes(result)) prediction = 'BIG';
+      document.getElementById('output').innerHTML += `<br><strong>${status.toUpperCase()}</strong> recorded for ${predictedPeriod} (actual: ${actual})`;
+      updateHistory();
 
-      document.getElementById('output').innerHTML = `
-        <strong>Period:</strong> ${period}<br>
-        <strong>Last Result:</strong> ${result}<br>
-        <strong>Prediction:</strong> ${prediction}
-      `;
+      // Reset
+      document.getElementById('hitMissSection').classList.add('hidden');
+      document.getElementById('actualResult').value = '';
+      document.getElementById('periodInput').value = '';
+      document.getElementById('predictedBox').innerHTML = '';
+    }
 
-      document.getElementById('showHistory').innerHTML = `<strong>Last 20 Results:</strong><br> ${history.join(', ')}`;
+    function updateHistory() {
+      document.getElementById('history').innerHTML = `<strong>Last 20 Results:</strong><br>${history.join(', ')}`;
     }
   </script></body>
 </html>
