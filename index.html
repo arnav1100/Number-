@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CRACKER 1.0 - Arnav's Premium Hack</title>
+  <title>CRACKER 1.0 - Number Sniper Hack by Arnav</title>
   <style>
     body {
       margin: 0;
@@ -19,7 +19,7 @@
       border-radius: 12px;
       box-shadow: 0 0 30px #00ff88;
     }
-    input, button, select {
+    input, button, select, textarea {
       width: 100%;
       padding: 10px;
       margin-top: 10px;
@@ -51,28 +51,40 @@
     .history {
       margin-top: 20px;
     }
-    .balance-info {
-      margin-top: 20px;
+    .section-title {
       font-weight: bold;
+      margin-top: 20px;
+      color: #00ffaa;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="arnav">👑 CRACKER 1.0 - Arnav's Premium Hack 👑</div>
-    <div class="quote">"I don’t guess. I break the system. — Arnav"</div><label>Enter Your Current Balance (₹)</label>
-<input type="number" id="balance" placeholder="e.g. 1000">
+    <div class="arnav">💀 CRACKER 1.0 - NUMBER SNIPER 🔫</div>
+    <div class="quote">"I don’t guess. I break the system. — Arnav"</div><div class="section-title">Step 1: Feed Last 20 Results (Numbers Only)</div>
+<textarea id="last20" rows="4" placeholder="e.g. 1,3,4,6,... (20 numbers)"></textarea>
 
 <label>Enter Current Period Number (last 3 digits)</label>
 <input type="text" id="period" placeholder="e.g. 875">
 
-<label>Enter Last Result Number (0-9)</label>
-<input type="number" id="lastNum" min="0" max="9">
+<button onclick="analyzePattern()">🔍 Crack & Predict</button>
 
-<button onclick="predictNow()">Predict 🔍</button>
+<div class="section-title">Prediction:</div>
+<div id="prediction"></div>
 
-<div class="balance-info" id="betInfo"></div>
-<div class="history" id="history"></div>
+<div class="section-title">Feedback</div>
+<label>Was it a HIT or MISS?</label>
+<select id="resultStatus">
+  <option value="hit">HIT</option>
+  <option value="miss">MISS</option>
+</select>
+
+<label>What was the actual result number?</label>
+<input type="number" id="actualNumber" min="0" max="9">
+<button onclick="updateHistory()">🔁 Update History</button>
+
+<div class="section-title">History (Last 20 Numbers)</div>
+<div id="history"></div>
 
 <div style="margin-top: 30px; font-size: 14px; text-align: center;">
   🔗 Telegram: <a href="https://t.me/ARNAV_1100" style="color:#00ffaa;">@ARNAV_1100</a><br>
@@ -80,44 +92,39 @@
 </div>
 
   </div>  <script>
-    let numberSuggestions = {
-      0: [2, 4, 8],
-      1: [3, 5, 9],
-      2: [0, 3, 7],
-      3: [1, 4, 6],
-      4: [0, 2, 5],
-      5: [1, 6, 9],
-      6: [3, 5, 7],
-      7: [2, 4, 8],
-      8: [0, 5, 7],
-      9: [1, 4, 6]
-    };
+    let lastResults = [];
 
-    const levelMultiplier = [1, 2, 4, 7, 13, 22, 36, 58];
-    let currentLevel = 0;
+    function analyzePattern() {
+      const input = document.getElementById("last20").value;
+      lastResults = input.split(',').map(x => parseInt(x.trim())).slice(-20);
+      if (lastResults.length !== 20 || lastResults.some(isNaN)) {
+        alert("Enter exactly 20 valid numbers (0-9)");
+        return;
+      }
 
-    function predictNow() {
-      let lastNum = parseInt(document.getElementById("lastNum").value);
-      let period = document.getElementById("period").value;
-      let balance = parseInt(document.getElementById("balance").value);
-      let numbers = numberSuggestions[lastNum] || [0, 1, 2];
+      let freq = Array(10).fill(0);
+      lastResults.forEach(num => freq[num]++);
 
-      let halfBalance = balance / 2;
-      let betPerNumber = calculateBet(halfBalance);
+      // Strategy: Pick rarest 3 numbers in last 20
+      let numbered = freq.map((f, n) => ({ num: n, freq: f }));
+      numbered.sort((a, b) => a.freq - b.freq);
+      let prediction = numbered.slice(0, 3).map(e => e.num);
 
-      document.getElementById("betInfo").innerHTML = `Prediction for Period ${period}:<br>
-      🎯 Suggested Numbers: <b>${numbers.join(", ")}</b><br>
-      💸 Bet Per Number: ₹<b>${betPerNumber[currentLevel]}</b> (Level ${currentLevel + 1})`;
+      document.getElementById("prediction").innerHTML = `🎯 Number Shots: <b>${prediction.join(', ')}</b>`;
     }
 
-    function calculateBet(halfBalance) {
-      let bets = [];
-      let base = 1;
-      for (let i = 0; i < 8; i++) {
-        let b = Math.max(base * levelMultiplier[i], 1);
-        bets.push(Math.min(Math.floor(b), halfBalance / (3 * (8 - i))));
+    function updateHistory() {
+      const status = document.getElementById("resultStatus").value;
+      const actual = parseInt(document.getElementById("actualNumber").value);
+      if (isNaN(actual) || actual < 0 || actual > 9) {
+        alert("Enter a valid number (0-9)");
+        return;
       }
-      return bets;
+      lastResults.push(actual);
+      if (lastResults.length > 20) lastResults.shift();
+
+      document.getElementById("history").innerText = `Last 20 Results: ${lastResults.join(', ')}`;
+      document.getElementById("last20").value = lastResults.join(', ');
     }
   </script></body>
 </html>
