@@ -34,7 +34,7 @@
       color: #ccc;
       font-style: italic;
     }
-    input, button, textarea {
+    input, button {
       width: 100%;
       padding: 15px;
       margin-top: 15px;
@@ -43,7 +43,7 @@
       border-radius: 10px;
       outline: none;
     }
-    input, textarea {
+    input {
       background: #222;
       color: #fff;
       border: 1px solid #555;
@@ -82,33 +82,14 @@
       border: 1px dashed #555;
       font-size: 0.95rem;
     }
-    .hit-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-    .hit-buttons button {
-      width: 48%;
-    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>CRACKER 1.0</h1>
-    <div class="quote">"Break the pattern. Sniper the system. – <strong>ARNAV</strong>"</div><div id="inputSection">
-  <input id="period" type="number" placeholder="Enter Current Period Number (e.g. 880)">
-  <div id="resultsContainer"></div>
-  <button onclick="generateFields()">📌 Submit 20 Results (Once)</button>
-</div>
-
-<div id="mainPrediction" style="display: none;">
-  <input id="currentResult" type="number" placeholder="Enter result number of this period">
-  <button onclick="predict()">🔍 Predict Next</button>
-  <div class="hit-buttons">
-    <button onclick="recordResult('hit')">✅ HIT</button>
-    <button onclick="recordResult('miss')">❌ MISS</button>
-  </div>
-</div>
+    <div class="quote">"Break the pattern. Sniper the system. – <strong>ARNAV</strong>"</div><input id="period" type="number" placeholder="Enter Current Period Number (e.g. 880)">
+<input id="currentResult" type="number" placeholder="Enter result number of this period">
+<button onclick="predict()">🔍 Predict Next</button>
 
 <div class="result-box" id="output">Prediction will appear here...</div>
 <div class="history-box" id="showHistory"></div>
@@ -120,52 +101,12 @@
 
   </div>  <script>
     let history = [];
-    let submitted = false;
-
-    function generateFields() {
-      if (submitted) return alert("Results already submitted. Start predictions now.");
-      const container = document.getElementById('resultsContainer');
-      container.innerHTML = '';
-      const period = parseInt(document.getElementById('period').value);
-      if (isNaN(period)) {
-        container.innerHTML = '<p>Please enter a valid current period number.</p>';
-        return;
-      }
-      for (let i = period - 20; i < period; i++) {
-        const label = document.createElement('label');
-        label.innerText = `Result of ${i}`;
-        label.style.display = 'block';
-        label.style.marginTop = '10px';
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.id = `r${i}`;
-        input.placeholder = `Enter result number for ${i}`;
-        container.appendChild(label);
-        container.appendChild(input);
-      }
-      const submitBtn = document.createElement('button');
-      submitBtn.textContent = "✅ Save & Start Prediction";
-      submitBtn.onclick = saveResults;
-      container.appendChild(submitBtn);
-    }
-
-    function saveResults() {
-      const period = parseInt(document.getElementById('period').value);
-      if (isNaN(period)) return alert("Invalid period");
-      for (let i = period - 20; i < period; i++) {
-        const val = parseInt(document.getElementById(`r${i}`).value);
-        if (isNaN(val)) return alert(`Result missing for ${i}`);
-        history.push(val);
-      }
-      submitted = true;
-      document.getElementById('inputSection').style.display = 'none';
-      document.getElementById('mainPrediction').style.display = 'block';
-      document.getElementById('showHistory').innerHTML = `<strong>Saved Last 20 Results:</strong><br> ${history.join(', ')}`;
-    }
 
     function predict() {
       const result = parseInt(document.getElementById('currentResult').value);
-      if (isNaN(result)) return alert("Enter result for current period.");
+      const period = parseInt(document.getElementById('period').value);
+      if (isNaN(result) || isNaN(period)) return alert("Enter valid inputs");
+
       history.push(result);
       if (history.length > 20) history.shift();
 
@@ -174,17 +115,12 @@
       if ([2, 3, 4, 6, 7].includes(result)) prediction = 'BIG';
 
       document.getElementById('output').innerHTML = `
+        <strong>Period:</strong> ${period}<br>
         <strong>Last Result:</strong> ${result}<br>
-        <strong>Prediction:</strong> ${prediction}<br>
-        <strong>Auto Updated ✔</strong>
+        <strong>Prediction:</strong> ${prediction}
       `;
 
       document.getElementById('showHistory').innerHTML = `<strong>Last 20 Results:</strong><br> ${history.join(', ')}`;
-    }
-
-    function recordResult(status) {
-      const last = history[history.length - 1];
-      alert(`Recorded ${status.toUpperCase()} for result ${last}`);
     }
   </script></body>
 </html>
