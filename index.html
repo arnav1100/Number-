@@ -85,7 +85,7 @@
     <p><strong>Prediction:</strong> Wait for next input...</p>
     <input id="periodInput" type="number" placeholder="Enter Period Number">
     <div id="predictedBox"></div>
-    <button onclick="generatePrediction()">Get Prediction</button>
+    <button onclick="generatePrediction()">Get Number Shots</button>
   </div>
 
   <div id="hitMissSection" class="hidden">
@@ -105,7 +105,6 @@
   </div>  <script>
     let history = [];
     let predictedPeriod = null;
-    let lastPrediction = '';
 
     function generateFields() {
       const period = parseInt(document.getElementById('startPeriod').value);
@@ -142,14 +141,17 @@
       if (isNaN(period)) return alert("Enter valid period");
       predictedPeriod = period;
 
-      const last = history[history.length - 1];
-      let prediction = '—';
-      if ([0, 1, 5, 8, 9].includes(last)) prediction = 'SMALL';
-      if ([2, 3, 4, 6, 7].includes(last)) prediction = 'BIG';
-      lastPrediction = prediction;
+      const freq = Array(10).fill(0);
+      history.forEach(num => freq[num]++);
 
-      document.getElementById('output').innerHTML = `<strong>Prediction for ${period}:</strong> ${prediction}`;
-      document.getElementById('predictedBox').innerHTML = `<strong>Based on last result:</strong> ${last}`;
+      let shots = freq
+        .map((count, num) => ({ num, count }))
+        .sort((a, b) => a.count - b.count)
+        .slice(0, 3)
+        .map(obj => obj.num);
+
+      document.getElementById('output').innerHTML = `<strong>Next Best Shots:</strong> ${shots.join(', ')}`;
+      document.getElementById('predictedBox').innerHTML = `<strong>Based on 20-round pattern</strong>`;
       document.getElementById('hitMissSection').classList.remove('hidden');
     }
 
@@ -163,7 +165,6 @@
       document.getElementById('output').innerHTML += `<br><strong>${status.toUpperCase()}</strong> recorded for ${predictedPeriod} (actual: ${actual})`;
       updateHistory();
 
-      // Reset
       document.getElementById('hitMissSection').classList.add('hidden');
       document.getElementById('actualResult').value = '';
       document.getElementById('periodInput').value = '';
