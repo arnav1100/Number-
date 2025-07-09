@@ -1,142 +1,116 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>CRACKER 1.0 - Number Sniper Hack by Arnav</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRACKER 1.0 - Number Sniper</title>
   <style>
     body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      color: #00FFAA;
-      background: url('bg.jpg') no-repeat center center fixed;
+      font-family: monospace;
+      background: url('your-background-image.gif') no-repeat center center fixed;
       background-size: cover;
-      backdrop-filter: brightness(0.3);
+      color: #00ffcc;
+      padding: 20px;
     }
     .container {
-      max-width: 700px;
+      max-width: 600px;
       margin: auto;
+      background: rgba(0, 0, 0, 0.8);
       padding: 20px;
-      background: rgba(0,0,0,0.6);
-      border-radius: 12px;
-      box-shadow: 0 0 30px #00ff88;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #00ffcc;
     }
-    input, button, select, textarea {
-      width: 100%;
+    .btn {
       padding: 10px;
-      margin-top: 10px;
+      margin: 5px;
+      background: #00ffcc;
+      color: black;
       border: none;
       border-radius: 5px;
-      font-size: 16px;
-    }
-    button {
-      background-color: #00ff88;
-      color: black;
       cursor: pointer;
-      font-weight: bold;
     }
-    button:hover {
-      background-color: #00ffaa;
+    .hidden {
+      display: none;
     }
     .quote {
-      text-align: center;
-      font-size: 1.2em;
       font-style: italic;
+      text-align: center;
       margin-top: 10px;
     }
-    .arnav {
+    .branding {
       text-align: center;
-      font-weight: bold;
-      font-size: 1.5em;
-      margin-bottom: 15px;
-    }
-    .history {
       margin-top: 20px;
-    }
-    .section-title {
-      font-weight: bold;
-      margin-top: 20px;
-      color: #00ffaa;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="arnav">💀 CRACKER 1.0 - NUMBER SNIPER 🔫</div>
-    <div class="quote">"I don’t guess. I break the system. — Arnav"</div><div class="section-title">Step 1: Enter Period Number (last 3 digits)</div>
-<input type="text" id="periodInput" placeholder="e.g. 845">
-<button onclick="askPrevious()">➡️ Enter Last 20 Results</button>
+    <h2>🔫 CRACKER 1.0 - Number Sniper</h2>
 
-<div class="section-title" id="inputBox"></div>
-<div id="prediction"></div>
+    <div id="input20">
+      <p>Enter Last 20 Results (space/comma separated):</p>
+      <input type="text" id="last20" style="width:100%;" />
+      <button class="btn" onclick="saveLast20()">Save & Start</button>
+    </div>
 
-<div class="section-title">Feedback</div>
-<label>Was it a HIT or MISS?</label>
-<select id="resultStatus">
-  <option value="hit">HIT</option>
-  <option value="miss">MISS</option>
-</select>
-<label>What was the actual result number?</label>
-<input type="number" id="actualNumber" min="0" max="9">
-<button onclick="updateHistory()">🔁 Update History</button>
+    <div id="predictionPanel" class="hidden">
+      <h3>🎯 Current Prediction:</h3>
+      <p id="prediction"></p>
 
-<div class="section-title">History (Last 20 Numbers)</div>
-<div id="history"></div>
+      <p>Enter actual result number:</p>
+      <input type="number" id="actualResult" />
+      <button class="btn" onclick="submitResult()">Submit Result</button>
 
-<div style="margin-top: 30px; font-size: 14px; text-align: center;">
-  🔗 Telegram: <a href="https://t.me/ARNAV_1100" style="color:#00ffaa;">@ARNAV_1100</a><br>
-  📢 Channel: <a href="https://t.me/+fKHabYVx_shkMDk1" style="color:#00ffaa;">Join Hack Alerts</a>
-</div>
+      <h4>📊 History (Last 20):</h4>
+      <p id="historyDisplay"></p>
+    </div>
 
-  </div>  <script>
-    let lastResults = [];
+    <div class="quote">“Master the chaos. Snipe the number. — <strong>ARNAV</strong>”</div>
+    <div class="branding">
+      🔗 <a href="https://t.me/+fKHabYVx_shkMDk1" style="color: #00ffcc;">Join Channel</a> | 👤 <a href="https://t.me/arnav_1100" style="color: #00ffcc;">@ARNAV_1100</a>
+    </div>
+  </div>
 
-    function askPrevious() {
-      const period = parseInt(document.getElementById("periodInput").value);
-      if (isNaN(period)) {
-        alert("Please enter a valid 3-digit period number");
+  <script>
+    let history = [];
+
+    function saveLast20() {
+      const input = document.getElementById('last20').value;
+      history = input.split(/,|\s+/).map(n => parseInt(n)).filter(n => !isNaN(n)).slice(-20);
+      if (history.length !== 20) {
+        alert('Please enter exactly 20 valid numbers.');
         return;
       }
-
-      let html = "<div><b>Enter last 20 result numbers before period " + period + ":</b></div>";
-      for (let i = period - 20; i < period; i++) {
-        html += `<label>${i}</label><input type='number' min='0' max='9' id='res${i}'><br>`;
-      }
-      html += `<button onclick='startPrediction(${period})'>🚀 Analyze & Predict</button>`;
-      document.getElementById("inputBox").innerHTML = html;
+      document.getElementById('input20').classList.add('hidden');
+      document.getElementById('predictionPanel').classList.remove('hidden');
+      predict();
     }
 
-    function startPrediction(currentPeriod) {
-      lastResults = [];
-      for (let i = currentPeriod - 20; i < currentPeriod; i++) {
-        const val = parseInt(document.getElementById(`res${i}`).value);
-        if (isNaN(val) || val < 0 || val > 9) {
-          alert("Enter all 20 numbers correctly");
-          return;
-        }
-        lastResults.push(val);
-      }
-      analyzePattern();
+    function predict() {
+      const freq = {};
+      history.forEach(num => freq[num] = (freq[num] || 0) + 1);
+      const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+      const top3 = sorted.slice(0, 3).map(entry => entry[0]);
+      document.getElementById('prediction').innerText = top3.join(' / ');
+      updateHistoryDisplay();
     }
 
-    function analyzePattern() {
-      let freq = Array(10).fill(0);
-      lastResults.forEach(num => freq[num]++);
-      let numbered = freq.map((f, n) => ({ num: n, freq: f }));
-      numbered.sort((a, b) => a.freq - b.freq);
-      let prediction = numbered.slice(0, 3).map(e => e.num);
-
-      document.getElementById("prediction").innerHTML = `<div class='section-title'>🎯 Number Shots: <b>${prediction.join(', ')}</b></div>`;
-    }
-
-    function updateHistory() {
-      const actual = parseInt(document.getElementById("actualNumber").value);
+    function submitResult() {
+      const actual = parseInt(document.getElementById('actualResult').value);
       if (isNaN(actual)) {
-        alert("Enter actual number (0-9)");
+        alert('Enter valid number result.');
         return;
       }
-      lastResults.push(actual);
-      if (lastResults.length > 20) lastResults.shift();
-      analyzePattern();
-      document.getElementById("history").innerText = `Last 20 Results: ${lastResults.join(', ')}`;
+      history.push(actual);
+      if (history.length > 20) history.shift();
+      document.getElementById('actualResult').value = '';
+      predict();
     }
-  </script></body>
+
+    function updateHistoryDisplay() {
+      document.getElementById('historyDisplay').innerText = history.join(', ');
+    }
+  </script>
+</body>
 </html>
