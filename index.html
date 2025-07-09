@@ -1,178 +1,119 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CRACKER 1.0</title>
+  <meta charset="UTF-8">
+  <title>CRACKER 1.0 - Arnav's Premium Hack</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
-      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      color: #00FFAA;
+      background: url('bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      backdrop-filter: brightness(0.3);
     }
     .container {
-      max-width: 600px;
-      margin: 40px auto;
-      padding: 30px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid #ff004f;
-      border-radius: 20px;
-      box-shadow: 0 0 25px #ff004f50;
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+      background: rgba(0,0,0,0.6);
+      border-radius: 12px;
+      box-shadow: 0 0 30px #00ff88;
     }
-    h1 {
-      text-align: center;
-      color: #ff004f;
-      font-size: 2.5rem;
+    input, button, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #00ff88;
+      color: black;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #00ffaa;
     }
     .quote {
       text-align: center;
-      color: #aaa;
-      margin-bottom: 30px;
+      font-size: 1.2em;
+      font-style: italic;
+      margin-top: 10px;
     }
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-    }
-    input {
-      background: #222;
-      color: #fff;
-      border: 1px solid #555;
-    }
-    button {
-      background: #ff004f;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #e60047;
-    }
-    .result-box, .history-box {
-      background: #111;
-      padding: 15px;
-      margin-top: 20px;
-      border-radius: 10px;
-      border: 1px solid #ff004f;
-    }
-    .footer {
+    .arnav {
       text-align: center;
-      margin-top: 40px;
-      color: #aaa;
-      font-size: 0.9rem;
+      font-weight: bold;
+      font-size: 1.5em;
+      margin-bottom: 15px;
     }
-    .footer a {
-      color: #ff004f;
-      text-decoration: none;
+    .history {
+      margin-top: 20px;
     }
-    .hidden { display: none; }
+    .balance-info {
+      margin-top: 20px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>CRACKER 1.0</h1>
-    <div class="quote">"Break the pattern. Sniper the system. – <strong>ARNAV</strong>"</div><div id="setupSection">
-  <input id="startPeriod" type="number" placeholder="Enter Current Period Number (e.g. 880)">
-  <div id="resultsContainer"></div>
-  <button onclick="generateFields()">Submit</button>
-</div>
+    <div class="arnav">👑 CRACKER 1.0 - Arnav's Premium Hack 👑</div>
+    <div class="quote">"I don’t guess. I break the system. — Arnav"</div>
 
-<div id="mainSection" class="hidden">
-  <div id="predictionSection">
-    <p><strong>Prediction:</strong> Wait for next input...</p>
-    <input id="periodInput" type="number" placeholder="Enter Period Number">
-    <div id="predictedBox"></div>
-    <button onclick="generatePrediction()">Get Number Shots</button>
+    <label>Enter Your Current Balance (₹)</label>
+    <input type="number" id="balance" placeholder="e.g. 1000">
+
+    <label>Enter Current Period Number (last 3 digits)</label>
+    <input type="text" id="period" placeholder="e.g. 875">
+
+    <label>Enter Last Result Number (0-9)</label>
+    <input type="number" id="lastNum" min="0" max="9">
+
+    <button onclick="predictNow()">Predict 🔍</button>
+
+    <div class="balance-info" id="betInfo"></div>
+    <div class="history" id="history"></div>
+
+    <div style="margin-top: 30px; font-size: 14px; text-align: center;">
+      🔗 Telegram: <a href="https://t.me/ARNAV_1100" style="color:#00ffaa;">@ARNAV_1100</a><br>
+      📢 Channel: <a href="https://t.me/+fKHabYVx_shkMDk1" style="color:#00ffaa;">Join Hack Alerts</a>
+    </div>
   </div>
 
-  <div id="hitMissSection" class="hidden">
-    <button onclick="recordResult('hit')">✅ HIT</button>
-    <button onclick="recordResult('miss')">❌ MISS</button>
-    <input id="actualResult" type="number" placeholder="Enter Actual Result">
-  </div>
+  <script>
+    const logicMap = {
+      0: 'BIG', 1: 'BIG', 2: 'SMALL', 3: 'SMALL',
+      4: 'SMALL', 5: 'BIG', 6: 'SMALL', 7: 'SMALL',
+      8: 'BIG', 9: 'BIG'
+    };
 
-  <div class="result-box" id="output">Prediction will appear here...</div>
-  <div class="history-box" id="history">History will appear here...</div>
-</div>
+    const levelMultiplier = [1, 2, 4, 7, 13, 22, 36, 58];
+    let currentLevel = 0;
 
-<div class="footer">
-  🔥 By <a href="https://t.me/ARNAV_1100">@ARNAV_1100</a> | 📢 Join: <a href="https://t.me/+fKHabYVx_shkMDk1">CRACKER Channel</a>
-</div>
+    function predictNow() {
+      let lastNum = parseInt(document.getElementById("lastNum").value);
+      let period = document.getElementById("period").value;
+      let balance = parseInt(document.getElementById("balance").value);
+      let result = logicMap[lastNum];
 
-  </div>  <script>
-    let history = [];
-    let predictedPeriod = null;
+      let halfBalance = balance / 2;
+      let betPerNumber = calculateBet(halfBalance);
 
-    function generateFields() {
-      const period = parseInt(document.getElementById('startPeriod').value);
-      if (isNaN(period)) return alert("Enter valid period");
+      document.getElementById("betInfo").innerHTML = `Prediction for Period ${period}: <br><b>${result}</b><br>🔫 Bet Per Number: ₹<b>${betPerNumber[currentLevel]}</b> (Level ${currentLevel + 1})`;
+    }
 
-      const container = document.getElementById('resultsContainer');
-      container.innerHTML = '';
-
-      for (let i = period - 20; i < period; i++) {
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.id = `r${i}`;
-        input.placeholder = `Result of ${i}`;
-        container.appendChild(input);
+    function calculateBet(halfBalance) {
+      let bets = [];
+      let base = 1;
+      for (let i = 0; i < 8; i++) {
+        let b = Math.max(base * levelMultiplier[i], 1);
+        bets.push(Math.min(Math.floor(b), halfBalance / (3 * (8 - i))));
       }
-
-      const submitBtn = document.createElement('button');
-      submitBtn.textContent = "✅ Save & Start";
-      submitBtn.onclick = () => {
-        for (let i = period - 20; i < period; i++) {
-          const val = parseInt(document.getElementById(`r${i}`).value);
-          if (isNaN(val)) return alert(`Missing value at ${i}`);
-          history.push(val);
-        }
-        document.getElementById('setupSection').classList.add('hidden');
-        document.getElementById('mainSection').classList.remove('hidden');
-        updateHistory();
-      };
-      container.appendChild(submitBtn);
+      return bets;
     }
-
-    function generatePrediction() {
-      const period = parseInt(document.getElementById('periodInput').value);
-      if (isNaN(period)) return alert("Enter valid period");
-      predictedPeriod = period;
-
-      const freq = Array(10).fill(0);
-      history.forEach(num => freq[num]++);
-
-      let shots = freq
-        .map((count, num) => ({ num, count }))
-        .sort((a, b) => a.count - b.count)
-        .slice(0, 3)
-        .map(obj => obj.num);
-
-      document.getElementById('output').innerHTML = `<strong>Next Best Shots:</strong> ${shots.join(', ')}`;
-      document.getElementById('predictedBox').innerHTML = `<strong>Based on 20-round pattern</strong>`;
-      document.getElementById('hitMissSection').classList.remove('hidden');
-    }
-
-    function recordResult(status) {
-      const actual = parseInt(document.getElementById('actualResult').value);
-      if (isNaN(actual)) return alert("Enter actual result");
-
-      history.push(actual);
-      if (history.length > 20) history.shift();
-
-      document.getElementById('output').innerHTML += `<br><strong>${status.toUpperCase()}</strong> recorded for ${predictedPeriod} (actual: ${actual})`;
-      updateHistory();
-
-      document.getElementById('hitMissSection').classList.add('hidden');
-      document.getElementById('actualResult').value = '';
-      document.getElementById('periodInput').value = '';
-      document.getElementById('predictedBox').innerHTML = '';
-    }
-
-    function updateHistory() {
-      document.getElementById('history').innerHTML = `<strong>Last 20 Results:</strong><br>${history.join(', ')}`;
-    }
-  </script></body>
+  </script>
+</body>
 </html>
