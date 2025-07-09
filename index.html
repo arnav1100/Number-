@@ -1,144 +1,142 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CRACKER 1.0 - Arnav's Hack</title>
+  <title>CRACKER 1.0 - Number Sniper Hack by Arnav</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
+      color: #00FFAA;
       background: url('bg.jpg') no-repeat center center fixed;
       background-size: cover;
-      color: white;
-      overflow-x: hidden;
-    }
-    .overlay {
-      background-color: rgba(0, 0, 0, 0.7);
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      z-index: 0;
+      backdrop-filter: brightness(0.3);
     }
     .container {
-      position: relative;
-      z-index: 1;
-      max-width: 600px;
-      margin: 50px auto;
-      background: rgba(20, 20, 20, 0.9);
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+      background: rgba(0,0,0,0.6);
+      border-radius: 12px;
+      box-shadow: 0 0 30px #00ff88;
     }
-    h1 {
-      text-align: center;
-      font-size: 2em;
-      margin-bottom: 10px;
-      background: linear-gradient(to right, #f0c27b, #4b1248);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    input, button, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #00ff88;
+      color: black;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #00ffaa;
     }
     .quote {
       text-align: center;
+      font-size: 1.2em;
       font-style: italic;
-      color: #aaa;
-      margin-bottom: 20px;
+      margin-top: 10px;
     }
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      font-size: 1em;
-      border: none;
-      border-radius: 10px;
-    }
-    input {
-      background-color: #222;
-      color: white;
-    }
-    button {
-      background-color: #ff6f00;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    button:hover {
-      background-color: #e65100;
-    }
-    .footer {
+    .arnav {
       text-align: center;
-      margin-top: 30px;
-      font-size: 0.9em;
+      font-weight: bold;
+      font-size: 1.5em;
+      margin-bottom: 15px;
     }
-    .footer a {
-      color: #ff9800;
-      text-decoration: none;
-    }
-    .results {
+    .history {
       margin-top: 20px;
-      padding: 10px;
-      background: #111;
-      border-radius: 10px;
-      max-height: 200px;
-      overflow-y: auto;
+    }
+    .section-title {
+      font-weight: bold;
+      margin-top: 20px;
+      color: #00ffaa;
     }
   </style>
 </head>
 <body>
-  <div class="overlay"></div>
   <div class="container">
-    <h1>⚔️ CRACKER 1.0 ⚔️</h1>
-    <p class="quote">"Every pattern can be broken — <strong>Arnav</strong>"</p>
+    <div class="arnav">💀 CRACKER 1.0 - NUMBER SNIPER 🔫</div>
+    <div class="quote">"I don’t guess. I break the system. — Arnav"</div><div class="section-title">Step 1: Enter Period Number (last 3 digits)</div>
+<input type="text" id="periodInput" placeholder="e.g. 845">
+<button onclick="askPrevious()">➡️ Enter Last 20 Results</button>
 
-    <input type="text" id="periodInput" placeholder="Enter current period number (3 digits)">
-    <button onclick="startPrediction()">Start Prediction</button>
+<div class="section-title" id="inputBox"></div>
+<div id="prediction"></div>
 
-    <div class="results" id="resultBox">
-      <p><strong>Prediction Result:</strong> _</p>
-      <p><strong>Last 20 Entries:</strong></p>
-      <div id="historyList"></div>
-    </div>
+<div class="section-title">Feedback</div>
+<label>Was it a HIT or MISS?</label>
+<select id="resultStatus">
+  <option value="hit">HIT</option>
+  <option value="miss">MISS</option>
+</select>
+<label>What was the actual result number?</label>
+<input type="number" id="actualNumber" min="0" max="9">
+<button onclick="updateHistory()">🔁 Update History</button>
 
-    <button onclick="markResult('hit')">Hit ✅</button>
-    <button onclick="markResult('miss')">Miss ❌</button>
+<div class="section-title">History (Last 20 Numbers)</div>
+<div id="history"></div>
 
-    <div class="footer">
-      🔗 <a href="https://t.me/+fKHabYVx_shkMDk1" target="_blank">Join Telegram Channel</a><br>
-      👤 <a href="https://t.me/arnav_1100" target="_blank">@ARNAV_1100</a>
-    </div>
-  </div>
+<div style="margin-top: 30px; font-size: 14px; text-align: center;">
+  🔗 Telegram: <a href="https://t.me/ARNAV_1100" style="color:#00ffaa;">@ARNAV_1100</a><br>
+  📢 Channel: <a href="https://t.me/+fKHabYVx_shkMDk1" style="color:#00ffaa;">Join Hack Alerts</a>
+</div>
 
-  <script>
-    let results = [];
+  </div>  <script>
+    let lastResults = [];
 
-    function startPrediction() {
-      const period = document.getElementById('periodInput').value;
-      if (period.length !== 3) return alert("Enter a 3-digit period number");
-      const prediction = getPrediction(period);
-      document.getElementById('resultBox').querySelector('p').innerText = `Prediction Result: ${prediction}`;
+    function askPrevious() {
+      const period = parseInt(document.getElementById("periodInput").value);
+      if (isNaN(period)) {
+        alert("Please enter a valid 3-digit period number");
+        return;
+      }
+
+      let html = "<div><b>Enter last 20 result numbers before period " + period + ":</b></div>";
+      for (let i = period - 20; i < period; i++) {
+        html += `<label>${i}</label><input type='number' min='0' max='9' id='res${i}'><br>`;
+      }
+      html += `<button onclick='startPrediction(${period})'>🚀 Analyze & Predict</button>`;
+      document.getElementById("inputBox").innerHTML = html;
     }
 
-    function getPrediction(period) {
-      const last = parseInt(period[2]);
-      return [0, 1, 5, 8, 9].includes(last) ? "Number Shot: BIG" : "Number Shot: SMALL";
+    function startPrediction(currentPeriod) {
+      lastResults = [];
+      for (let i = currentPeriod - 20; i < currentPeriod; i++) {
+        const val = parseInt(document.getElementById(`res${i}`).value);
+        if (isNaN(val) || val < 0 || val > 9) {
+          alert("Enter all 20 numbers correctly");
+          return;
+        }
+        lastResults.push(val);
+      }
+      analyzePattern();
     }
 
-    function markResult(status) {
-      const period = document.getElementById('periodInput').value;
-      const number = prompt("Enter result number for period " + period);
-      if (number === null || number === '') return;
-      results.push(`${period} → ${number} (${status.toUpperCase()})`);
-      if (results.length > 20) results.shift();
-      showHistory();
+    function analyzePattern() {
+      let freq = Array(10).fill(0);
+      lastResults.forEach(num => freq[num]++);
+      let numbered = freq.map((f, n) => ({ num: n, freq: f }));
+      numbered.sort((a, b) => a.freq - b.freq);
+      let prediction = numbered.slice(0, 3).map(e => e.num);
+
+      document.getElementById("prediction").innerHTML = `<div class='section-title'>🎯 Number Shots: <b>${prediction.join(', ')}</b></div>`;
     }
 
-    function showHistory() {
-      document.getElementById('historyList').innerHTML = results.map(r => `<div>• ${r}</div>`).join('');
+    function updateHistory() {
+      const actual = parseInt(document.getElementById("actualNumber").value);
+      if (isNaN(actual)) {
+        alert("Enter actual number (0-9)");
+        return;
+      }
+      lastResults.push(actual);
+      if (lastResults.length > 20) lastResults.shift();
+      analyzePattern();
+      document.getElementById("history").innerText = `Last 20 Results: ${lastResults.join(', ')}`;
     }
-  </script>
-</body>
+  </script></body>
 </html>
