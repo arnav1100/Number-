@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>CRACKER 1.0 - Arnav's Premium Hack</title>
@@ -61,33 +60,37 @@
 <body>
   <div class="container">
     <div class="arnav">👑 CRACKER 1.0 - Arnav's Premium Hack 👑</div>
-    <div class="quote">"I don’t guess. I break the system. — Arnav"</div>
+    <div class="quote">"I don’t guess. I break the system. — Arnav"</div><label>Enter Your Current Balance (₹)</label>
+<input type="number" id="balance" placeholder="e.g. 1000">
 
-    <label>Enter Your Current Balance (₹)</label>
-    <input type="number" id="balance" placeholder="e.g. 1000">
+<label>Enter Current Period Number (last 3 digits)</label>
+<input type="text" id="period" placeholder="e.g. 875">
 
-    <label>Enter Current Period Number (last 3 digits)</label>
-    <input type="text" id="period" placeholder="e.g. 875">
+<label>Enter Last Result Number (0-9)</label>
+<input type="number" id="lastNum" min="0" max="9">
 
-    <label>Enter Last Result Number (0-9)</label>
-    <input type="number" id="lastNum" min="0" max="9">
+<button onclick="predictNow()">Predict 🔍</button>
 
-    <button onclick="predictNow()">Predict 🔍</button>
+<div class="balance-info" id="betInfo"></div>
+<div class="history" id="history"></div>
 
-    <div class="balance-info" id="betInfo"></div>
-    <div class="history" id="history"></div>
+<div style="margin-top: 30px; font-size: 14px; text-align: center;">
+  🔗 Telegram: <a href="https://t.me/ARNAV_1100" style="color:#00ffaa;">@ARNAV_1100</a><br>
+  📢 Channel: <a href="https://t.me/+fKHabYVx_shkMDk1" style="color:#00ffaa;">Join Hack Alerts</a>
+</div>
 
-    <div style="margin-top: 30px; font-size: 14px; text-align: center;">
-      🔗 Telegram: <a href="https://t.me/ARNAV_1100" style="color:#00ffaa;">@ARNAV_1100</a><br>
-      📢 Channel: <a href="https://t.me/+fKHabYVx_shkMDk1" style="color:#00ffaa;">Join Hack Alerts</a>
-    </div>
-  </div>
-
-  <script>
-    const logicMap = {
-      0: 'BIG', 1: 'BIG', 2: 'SMALL', 3: 'SMALL',
-      4: 'SMALL', 5: 'BIG', 6: 'SMALL', 7: 'SMALL',
-      8: 'BIG', 9: 'BIG'
+  </div>  <script>
+    let numberSuggestions = {
+      0: [2, 4, 8],
+      1: [3, 5, 9],
+      2: [0, 3, 7],
+      3: [1, 4, 6],
+      4: [0, 2, 5],
+      5: [1, 6, 9],
+      6: [3, 5, 7],
+      7: [2, 4, 8],
+      8: [0, 5, 7],
+      9: [1, 4, 6]
     };
 
     const levelMultiplier = [1, 2, 4, 7, 13, 22, 36, 58];
@@ -97,12 +100,14 @@
       let lastNum = parseInt(document.getElementById("lastNum").value);
       let period = document.getElementById("period").value;
       let balance = parseInt(document.getElementById("balance").value);
-      let result = logicMap[lastNum];
+      let numbers = numberSuggestions[lastNum] || [0, 1, 2];
 
       let halfBalance = balance / 2;
       let betPerNumber = calculateBet(halfBalance);
 
-      document.getElementById("betInfo").innerHTML = `Prediction for Period ${period}: <br><b>${result}</b><br>🔫 Bet Per Number: ₹<b>${betPerNumber[currentLevel]}</b> (Level ${currentLevel + 1})`;
+      document.getElementById("betInfo").innerHTML = `Prediction for Period ${period}:<br>
+      🎯 Suggested Numbers: <b>${numbers.join(", ")}</b><br>
+      💸 Bet Per Number: ₹<b>${betPerNumber[currentLevel]}</b> (Level ${currentLevel + 1})`;
     }
 
     function calculateBet(halfBalance) {
@@ -114,6 +119,5 @@
       }
       return bets;
     }
-  </script>
-</body>
+  </script></body>
 </html>
