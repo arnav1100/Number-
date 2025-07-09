@@ -87,9 +87,9 @@
 <body>
   <div class="container">
     <h1>CRACKER 1.0</h1>
-    <div class="quote">"Break the pattern. Sniper the system. – <strong>ARNAV</strong>"</div><input id="period" type="number" placeholder="Enter Current Period Number (Last 3 Digits)">
-<input id="lastResult" type="number" placeholder="Enter Last Result Number (0-9)">
-<textarea id="history" rows="6" placeholder="Enter last 20 results, separated by commas (e.g. 2,7,3,...)"></textarea>
+    <div class="quote">"Break the pattern. Sniper the system. – <strong>ARNAV</strong>"</div><input id="period" type="number" placeholder="Enter Current Period Number (e.g. 880)">
+<div id="resultsContainer"></div>
+<button onclick="generateFields()">🧠 Enter Last 20 Results</button>
 <button onclick="predict()">🔍 Crack & Predict</button>
 
 <div class="result-box" id="output">Prediction will appear here...</div>
@@ -101,35 +101,59 @@
 </div>
 
   </div>  <script>
-    function predict() {
-      const last = parseInt(document.getElementById('lastResult').value);
-      const period = document.getElementById('period').value;
-      const historyRaw = document.getElementById('history').value;
-      const output = document.getElementById('output');
-      const showHistory = document.getElementById('showHistory');
-
-      if (isNaN(last) || !historyRaw.trim()) {
-        output.innerText = "Please enter valid inputs.";
+    function generateFields() {
+      const container = document.getElementById('resultsContainer');
+      container.innerHTML = '';
+      const period = parseInt(document.getElementById('period').value);
+      if (isNaN(period)) {
+        container.innerHTML = '<p>Please enter a valid current period number.</p>';
         return;
       }
+      for (let i = period - 20; i < period; i++) {
+        const label = document.createElement('label');
+        label.innerText = `Result of ${i}`;
+        label.style.display = 'block';
+        label.style.marginTop = '10px';
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.id = `r${i}`;
+        input.placeholder = `Enter result number for ${i}`;
+        container.appendChild(label);
+        container.appendChild(input);
+      }
+    }
 
+    function predict() {
+      const period = parseInt(document.getElementById('period').value);
+      if (isNaN(period)) {
+        document.getElementById('output').innerText = 'Enter valid period number first.';
+        return;
+      }
+      let history = [];
+      for (let i = period - 20; i < period; i++) {
+        const val = parseInt(document.getElementById(`r${i}`).value);
+        if (isNaN(val)) {
+          document.getElementById('output').innerText = `Enter valid result for period ${i}`;
+          return;
+        }
+        history.push(val);
+      }
+      const last = history[history.length - 1];
       let prediction = 'UNKNOWN';
       if ([0, 1, 5, 8, 9].includes(last)) prediction = 'BIG';
       if ([2, 3, 4, 6, 7].includes(last)) prediction = 'SMALL';
 
-      const history = historyRaw.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
       let counts = {};
       history.forEach(n => counts[n] = (counts[n] || 0) + 1);
       const mostFreq = Object.keys(counts).sort((a, b) => counts[b] - counts[a]).slice(0, 3);
 
-      output.innerHTML = `
+      document.getElementById('output').innerHTML = `
         <strong>Current Period:</strong> ${period} <br>
         <strong>Prediction:</strong> ${prediction}<br>
         <strong>Top Trending Digits:</strong> ${mostFreq.join(', ')}<br>
         <strong>Auto Re-Analyzed Based on History ✔</strong>
       `;
-
-      showHistory.innerHTML = `<strong>Last 20 Results:</strong><br> ${history.join(' , ')}`;
+      document.getElementById('showHistory').innerHTML = `<strong>Last 20 Results:</strong><br> ${history.join(', ')}`;
     }
   </script></body>
 </html>
