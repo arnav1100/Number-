@@ -89,8 +89,8 @@
     <h1>CRACKER 1.0</h1>
     <div class="quote">"Break the pattern. Sniper the system. – <strong>ARNAV</strong>"</div><input id="period" type="number" placeholder="Enter Current Period Number (e.g. 880)">
 <div id="resultsContainer"></div>
-<button onclick="generateFields()">🧠 Enter Last 20 Results</button>
-<button onclick="predict()">🔍 Crack & Predict</button>
+<button onclick="generateFields()">📌 Submit 20 Results (Once)</button>
+<button onclick="predict()">🔍 Predict Next</button>
 
 <div class="result-box" id="output">Prediction will appear here...</div>
 <div class="history-box" id="showHistory"></div>
@@ -101,7 +101,11 @@
 </div>
 
   </div>  <script>
+    let history = [];
+    let submitted = false;
+
     function generateFields() {
+      if (submitted) return alert("Results already submitted. Just enter new period and click Predict.");
       const container = document.getElementById('resultsContainer');
       container.innerHTML = '';
       const period = parseInt(document.getElementById('period').value);
@@ -129,19 +133,23 @@
         document.getElementById('output').innerText = 'Enter valid period number first.';
         return;
       }
-      let history = [];
-      for (let i = period - 20; i < period; i++) {
-        const val = parseInt(document.getElementById(`r${i}`).value);
-        if (isNaN(val)) {
-          document.getElementById('output').innerText = `Enter valid result for period ${i}`;
-          return;
+      if (!submitted) {
+        history = [];
+        for (let i = period - 20; i < period; i++) {
+          const val = parseInt(document.getElementById(`r${i}`).value);
+          if (isNaN(val)) {
+            document.getElementById('output').innerText = `Enter valid result for period ${i}`;
+            return;
+          }
+          history.push(val);
         }
-        history.push(val);
+        submitted = true;
       }
+
       const last = history[history.length - 1];
-      let prediction = 'UNKNOWN';
-      if ([0, 1, 5, 8, 9].includes(last)) prediction = 'BIG';
-      if ([2, 3, 4, 6, 7].includes(last)) prediction = 'SMALL';
+      let prediction = '—';
+      if ([0, 1, 5, 8, 9].includes(last)) prediction = 'SMALL';
+      if ([2, 3, 4, 6, 7].includes(last)) prediction = 'BIG';
 
       let counts = {};
       history.forEach(n => counts[n] = (counts[n] || 0) + 1);
@@ -149,11 +157,10 @@
 
       document.getElementById('output').innerHTML = `
         <strong>Current Period:</strong> ${period} <br>
-        <strong>Prediction:</strong> ${prediction}<br>
-        <strong>Top Trending Digits:</strong> ${mostFreq.join(', ')}<br>
+        <strong>Last Result:</strong> ${last}<br>
         <strong>Auto Re-Analyzed Based on History ✔</strong>
       `;
-      document.getElementById('showHistory').innerHTML = `<strong>Last 20 Results:</strong><br> ${history.join(', ')}`;
+      document.getElementById('showHistory').innerHTML = `<strong>Saved Last 20 Results:</strong><br> ${history.join(', ')}`;
     }
   </script></body>
 </html>
