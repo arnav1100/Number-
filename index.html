@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -46,34 +45,47 @@
 </head>
 <body>
   <div class="container">
-    <h2>🔫 CRACKER 1.0 - Number Sniper</h2>
+    <h2>🔫 CRACKER 1.0 - Number Sniper</h2><div id="step1">
+  <p>Enter Current Period Number:</p>
+  <input type="text" id="currentPeriod" style="width:100%;" />
+  <button class="btn" onclick="goToStep2()">Next</button>
+</div>
 
-    <div id="input20">
-      <p>Enter Last 20 Results (space/comma separated):</p>
-      <input type="text" id="last20" style="width:100%;" />
-      <button class="btn" onclick="saveLast20()">Save & Start</button>
-    </div>
+<div id="step2" class="hidden">
+  <p>Enter Last 20 Results (space/comma separated):</p>
+  <input type="text" id="last20" style="width:100%;" />
+  <button class="btn" onclick="saveLast20()">Save & Start</button>
+</div>
 
-    <div id="predictionPanel" class="hidden">
-      <h3>🎯 Current Prediction:</h3>
-      <p id="prediction"></p>
+<div id="predictionPanel" class="hidden">
+  <h3>🎯 Current Prediction:</h3>
+  <p id="prediction"></p>
 
-      <p>Enter actual result number:</p>
-      <input type="number" id="actualResult" />
-      <button class="btn" onclick="submitResult()">Submit Result</button>
+  <p>Enter actual result number:</p>
+  <input type="number" id="actualResult" />
+  <button class="btn" onclick="submitResult()">Submit Result</button>
 
-      <h4>📊 History (Last 20):</h4>
-      <p id="historyDisplay"></p>
-    </div>
+  <h4>📊 History (Last 20):</h4>
+  <p id="historyDisplay"></p>
+</div>
 
-    <div class="quote">“Master the chaos. Snipe the number. — <strong>ARNAV</strong>”</div>
-    <div class="branding">
-      🔗 <a href="https://t.me/+fKHabYVx_shkMDk1" style="color: #00ffcc;">Join Channel</a> | 👤 <a href="https://t.me/arnav_1100" style="color: #00ffcc;">@ARNAV_1100</a>
-    </div>
-  </div>
+<div class="quote">“Master the chaos. Snipe the number. — <strong>ARNAV</strong>”</div>
+<div class="branding">
+  🔗 <a href="https://t.me/+fKHabYVx_shkMDk1" style="color: #00ffcc;">Join Channel</a> | 👤 <a href="https://t.me/arnav_1100" style="color: #00ffcc;">@ARNAV_1100</a>
+</div>
 
-  <script>
+  </div>  <script>
     let history = [];
+
+    function goToStep2() {
+      const period = document.getElementById('currentPeriod').value;
+      if (!period || isNaN(period)) {
+        alert('Enter a valid period number');
+        return;
+      }
+      document.getElementById('step1').classList.add('hidden');
+      document.getElementById('step2').classList.remove('hidden');
+    }
 
     function saveLast20() {
       const input = document.getElementById('last20').value;
@@ -82,7 +94,7 @@
         alert('Please enter exactly 20 valid numbers.');
         return;
       }
-      document.getElementById('input20').classList.add('hidden');
+      document.getElementById('step2').classList.add('hidden');
       document.getElementById('predictionPanel').classList.remove('hidden');
       predict();
     }
@@ -111,6 +123,5 @@
     function updateHistoryDisplay() {
       document.getElementById('historyDisplay').innerText = history.join(', ');
     }
-  </script>
-</body>
+  </script></body>
 </html>
