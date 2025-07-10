@@ -5,92 +5,104 @@
   <title>CRACKER 1.0 - Number Sniper</title>
   <style>
     body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: url('background.jpg') no-repeat center center fixed;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=1770&q=80');
       background-size: cover;
       color: #fff;
-      text-align: center;
       padding: 20px;
+      margin: 0;
     }
     .container {
-      background: rgba(0, 0, 0, 0.7);
-      border-radius: 16px;
-      padding: 20px;
       max-width: 600px;
       margin: auto;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+      background: rgba(0,0,0,0.8);
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px #00f2ff;
     }
-    input, button, textarea {
-      padding: 10px;
-      margin: 10px 0;
+    h1 {
+      text-align: center;
+      font-size: 2em;
+      color: #00f2ff;
+    }
+    .quote {
+      text-align: center;
+      font-style: italic;
+      margin-bottom: 20px;
+    }
+    label, input, button, textarea {
+      display: block;
       width: 100%;
-      border-radius: 8px;
-      border: none;
+      margin: 10px 0;
+      padding: 10px;
       font-size: 16px;
     }
     button {
-      background-color: #00ffcc;
-      color: #000;
+      background: #00f2ff;
+      color: black;
+      border: none;
       cursor: pointer;
+      font-weight: bold;
     }
-    .results {
-      margin-top: 20px;
-      font-size: 20px;
+    button:hover {
+      background: #00c6d7;
     }
-    .quote {
-      font-style: italic;
-      margin-top: 20px;
+    .result {
       font-size: 18px;
-      color: #ffcc00;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 14px;
+    }
+    .footer a {
+      color: #00f2ff;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>CRACKER 1.0</h1>
-    <p class="quote">"Master the digits, dominate the game." — ARNAV</p>
-    <p>Enter <strong>Current Period Number (Last 3 Digits)</strong>:</p>
-    <input type="number" id="currentPeriod" placeholder="e.g., 865" /><p>Enter <strong>Last 20 Result Numbers</strong> (Separate with space):</p>
-<textarea id="resultInput" rows="4" placeholder="e.g., 2 7 6 0 3 0 8 7 4 1 7 6 0 7 3 7 5 2 1 3"></textarea>
+    <div class="quote">
+      "They call me a hacker, I call it precision." — <strong>Arnav</strong>
+    </div><label>Current Period Number (Last 3 Digits)</label>
+<input type="text" id="periodNumber" placeholder="e.g. 865" maxlength="3" />
 
-<button onclick="analyze()">Save & Predict</button>
+<label>Enter Last 20 Period Results (Only Number, one per line)</label>
+<textarea id="lastResults" placeholder="Enter last 20 result digits like:\n2\n7\n6\n0..." rows="10"></textarea>
 
-<div id="prediction" class="results"></div>
-<div id="history" class="results"></div>
-<div class="quote">
-  Telegram: <a href="https://t.me/arnav_1100" style="color:#0ff">@ARNAV_1100</a><br>
-  Channel: <a href="https://t.me/+fKHabYVx_shkMDk1" style="color:#0ff">Join Here</a>
+<button onclick="analyzeResults()">Get Number Shots</button>
+
+<div class="result" id="output"></div>
+
+<div class="footer">
+  <p>Join Telegram: <a href="https://t.me/+fKHabYVx_shkMDk1" target="_blank">CRACKER Channel</a></p>
+  <p>DM: <a href="https://t.me/arnav_1100" target="_blank">@ARNAV_1100</a></p>
 </div>
 
   </div>  <script>
-    let resultHistory = [];
-
-    function analyze() {
-      const current = document.getElementById("currentPeriod").value;
-      const input = document.getElementById("resultInput").value.trim();
-      const results = input.split(" ").map(Number);
-
-      if (results.length !== 20) {
-        alert("Please enter exactly 20 numbers.");
+    function analyzeResults() {
+      const input = document.getElementById("lastResults").value.trim().split("\n");
+      if (input.length < 20) {
+        document.getElementById("output").innerText = "❌ Enter exactly 20 results.";
         return;
       }
-
-      resultHistory = results;
-      document.getElementById("resultInput").value = "";
-
-      let freq = {};
-      results.forEach(num => {
-        freq[num] = (freq[num] || 0) + 1;
+      let frequency = {};
+      input.forEach(n => {
+        if (!frequency[n]) frequency[n] = 0;
+        frequency[n]++;
       });
 
-      const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
-      const top3 = sorted.slice(0, 3).map(e => e[0]);
+      const sorted = Object.entries(frequency).sort((a, b) => b[1] - a[1]);
+      const topThree = sorted.slice(0, 3).map(e => e[0]);
 
-      document.getElementById("prediction").innerHTML =
-        `<h2>🔥 Suggested Number Shots:</h2><strong>${top3.join(" / ")}</strong>`;
+      document.getElementById("output").innerHTML = `🔫 <strong>Play on:</strong> ${topThree.join(" / ")}<br><br>✅ Strategy: Last 20 result frequency sniper logic.`;
 
-      document.getElementById("history").innerText = `Saved History (Latest 20):\n${resultHistory.join(" → ")}`;
+      // clear input fields (optionally)
+      // document.getElementById("lastResults").value = "";
     }
   </script></body>
 </html>
