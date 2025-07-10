@@ -1,111 +1,144 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CRACKER 1.0 - Arnav's Number Sniper</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRACKER 1.0 - Arnav's Hack</title>
   <style>
     body {
       margin: 0;
+      padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: url('https://images.unsplash.com/photo-1633356122204-3fa0ac531d2b?auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
-      color: #00ffcc;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-      text-shadow: 0 0 6px #000;
+      background: url('bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      overflow-x: hidden;
+    }
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.7);
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
     }
     .container {
-      background-color: rgba(0, 0, 0, 0.7);
+      position: relative;
+      z-index: 1;
+      max-width: 600px;
+      margin: 50px auto;
+      background: rgba(20, 20, 20, 0.9);
       padding: 30px;
-      border-radius: 15px;
-      width: 100%;
-      max-width: 500px;
-      box-shadow: 0 0 20px #00ffcc;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
     }
     h1 {
       text-align: center;
+      font-size: 2em;
       margin-bottom: 10px;
+      background: linear-gradient(to right, #f0c27b, #4b1248);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .quote {
+      text-align: center;
+      font-style: italic;
+      color: #aaa;
+      margin-bottom: 20px;
     }
     input, button {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin: 10px 0;
+      font-size: 1em;
       border: none;
-      border-radius: 8px;
-      font-size: 16px;
+      border-radius: 10px;
+    }
+    input {
+      background-color: #222;
+      color: white;
     }
     button {
-      background-color: #00ffcc;
-      color: #000;
+      background-color: #ff6f00;
+      color: white;
       font-weight: bold;
       cursor: pointer;
+      transition: background 0.3s;
     }
-    #quote {
-      font-style: italic;
-      margin-top: 20px;
+    button:hover {
+      background-color: #e65100;
+    }
+    .footer {
       text-align: center;
-      color: #fff;
+      margin-top: 30px;
+      font-size: 0.9em;
     }
-    #resultHistory {
+    .footer a {
+      color: #ff9800;
+      text-decoration: none;
+    }
+    .results {
       margin-top: 20px;
-      color: #fff;
+      padding: 10px;
+      background: #111;
+      border-radius: 10px;
+      max-height: 200px;
+      overflow-y: auto;
     }
   </style>
 </head>
 <body>
+  <div class="overlay"></div>
   <div class="container">
-    <h1>CRACKER 1.0 🔥</h1>
-    <div id="setup">
-      <input type="text" id="periodInput" placeholder="Enter Current Period Number (3-digit)" />
-      <textarea id="historyInput" placeholder="Enter last 20 results (space/comma separated)"></textarea>
-      <button onclick="saveHistory()">Save & Start Prediction</button>
-    </div><div id="predictor" style="display:none;">
-  <h2>Current Period: <span id="currentPeriod"></span></h2>
-  <p><strong>🔥 Suggested Numbers:</strong> <span id="suggestedNumbers"></span></p>
-  <input type="text" id="actualResult" placeholder="Enter Actual Result Number" />
-  <button onclick="submitResult()">Submit Result</button>
-  <div id="resultHistory"></div>
-</div>
+    <h1>⚔️ CRACKER 1.0 ⚔️</h1>
+    <p class="quote">"Every pattern can be broken — <strong>Arnav</strong>"</p>
 
-<div id="quote">
-  "I don't just play the game... I *break* it. — Arnav"
-  <br>
-  <br>
-  Telegram: <a href="https://t.me/+fKHabYVx_shkMDk1" style="color:#00ffcc">Channel</a> | <a href="https://t.me/arnav_1100" style="color:#00ffcc">@ARNAV_1100</a>
-</div>
+    <input type="text" id="periodInput" placeholder="Enter current period number (3 digits)">
+    <button onclick="startPrediction()">Start Prediction</button>
 
-  </div>  <script>
-    let resultHistory = [];
-    function saveHistory() {
+    <div class="results" id="resultBox">
+      <p><strong>Prediction Result:</strong> _</p>
+      <p><strong>Last 20 Entries:</strong></p>
+      <div id="historyList"></div>
+    </div>
+
+    <button onclick="markResult('hit')">Hit ✅</button>
+    <button onclick="markResult('miss')">Miss ❌</button>
+
+    <div class="footer">
+      🔗 <a href="https://t.me/+fKHabYVx_shkMDk1" target="_blank">Join Telegram Channel</a><br>
+      👤 <a href="https://t.me/arnav_1100" target="_blank">@ARNAV_1100</a>
+    </div>
+  </div>
+
+  <script>
+    let results = [];
+
+    function startPrediction() {
       const period = document.getElementById('periodInput').value;
-      const rawHistory = document.getElementById('historyInput').value;
-      resultHistory = rawHistory.split(/\s|,/).map(n => parseInt(n)).slice(-20);
-      document.getElementById('setup').style.display = 'none';
-      document.getElementById('predictor').style.display = 'block';
-      document.getElementById('currentPeriod').innerText = period;
-      updatePrediction();
+      if (period.length !== 3) return alert("Enter a 3-digit period number");
+      const prediction = getPrediction(period);
+      document.getElementById('resultBox').querySelector('p').innerText = `Prediction Result: ${prediction}`;
     }
 
-    function updatePrediction() {
-      const freqMap = {};
-      resultHistory.forEach(n => {
-        freqMap[n] = (freqMap[n] || 0) + 1;
-      });
-      const sorted = Object.entries(freqMap).sort((a, b) => b[1] - a[1]);
-      const top3 = sorted.slice(0, 3).map(([num]) => num);
-      document.getElementById('suggestedNumbers').innerText = top3.join(' / ');
+    function getPrediction(period) {
+      const last = parseInt(period[2]);
+      return [0, 1, 5, 8, 9].includes(last) ? "Number Shot: BIG" : "Number Shot: SMALL";
     }
 
-    function submitResult() {
-      const newResult = parseInt(document.getElementById('actualResult').value);
-      if (!isNaN(newResult)) {
-        resultHistory.push(newResult);
-        if (resultHistory.length > 20) resultHistory.shift();
-        updatePrediction();
-        document.getElementById('actualResult').value = '';
-        document.getElementById('resultHistory').innerText = `History: ${resultHistory.join(', ')}`;
-      }
+    function markResult(status) {
+      const period = document.getElementById('periodInput').value;
+      const number = prompt("Enter result number for period " + period);
+      if (number === null || number === '') return;
+      results.push(`${period} → ${number} (${status.toUpperCase()})`);
+      if (results.length > 20) results.shift();
+      showHistory();
     }
-  </script></body>
+
+    function showHistory() {
+      document.getElementById('historyList').innerHTML = results.map(r => `<div>• ${r}</div>`).join('');
+    }
+  </script>
+</body>
 </html>
