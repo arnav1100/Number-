@@ -2,126 +2,110 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CRACKER 1.0 - Number Sniper</title>
+  <title>CRACKER 1.0 - Arnav's Number Sniper</title>
   <style>
     body {
-      font-family: monospace;
-      background: url('your-background-image.gif') no-repeat center center fixed;
-      background-size: cover;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('https://images.unsplash.com/photo-1633356122204-3fa0ac531d2b?auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
       color: #00ffcc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       padding: 20px;
+      text-shadow: 0 0 6px #000;
     }
     .container {
-      max-width: 600px;
-      margin: auto;
-      background: rgba(0, 0, 0, 0.8);
-      padding: 20px;
-      border-radius: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 500px;
       box-shadow: 0 0 20px #00ffcc;
     }
-    .btn {
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    input, button {
+      width: 100%;
       padding: 10px;
-      margin: 5px;
-      background: #00ffcc;
-      color: black;
+      margin: 10px 0;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #00ffcc;
+      color: #000;
+      font-weight: bold;
       cursor: pointer;
     }
-    .hidden {
-      display: none;
-    }
-    .quote {
+    #quote {
       font-style: italic;
-      text-align: center;
-      margin-top: 10px;
-    }
-    .branding {
-      text-align: center;
       margin-top: 20px;
-      font-size: 14px;
+      text-align: center;
+      color: #fff;
+    }
+    #resultHistory {
+      margin-top: 20px;
+      color: #fff;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>🔫 CRACKER 1.0 - Number Sniper</h2><div id="step1">
-  <p>Enter Current Period Number:</p>
-  <input type="text" id="currentPeriod" style="width:100%;" />
-  <button class="btn" onclick="goToStep2()">Next</button>
+    <h1>CRACKER 1.0 🔥</h1>
+    <div id="setup">
+      <input type="text" id="periodInput" placeholder="Enter Current Period Number (3-digit)" />
+      <textarea id="historyInput" placeholder="Enter last 20 results (space/comma separated)"></textarea>
+      <button onclick="saveHistory()">Save & Start Prediction</button>
+    </div><div id="predictor" style="display:none;">
+  <h2>Current Period: <span id="currentPeriod"></span></h2>
+  <p><strong>🔥 Suggested Numbers:</strong> <span id="suggestedNumbers"></span></p>
+  <input type="text" id="actualResult" placeholder="Enter Actual Result Number" />
+  <button onclick="submitResult()">Submit Result</button>
+  <div id="resultHistory"></div>
 </div>
 
-<div id="step2" class="hidden">
-  <p>Enter Last 20 Results (space/comma separated):</p>
-  <input type="text" id="last20" style="width:100%;" />
-  <button class="btn" onclick="saveLast20()">Save & Start</button>
-</div>
-
-<div id="predictionPanel" class="hidden">
-  <h3>🎯 Current Prediction:</h3>
-  <p id="prediction"></p>
-
-  <p>Enter actual result number:</p>
-  <input type="number" id="actualResult" />
-  <button class="btn" onclick="submitResult()">Submit Result</button>
-
-  <h4>📊 History (Last 20):</h4>
-  <p id="historyDisplay"></p>
-</div>
-
-<div class="quote">“Master the chaos. Snipe the number. — <strong>ARNAV</strong>”</div>
-<div class="branding">
-  🔗 <a href="https://t.me/+fKHabYVx_shkMDk1" style="color: #00ffcc;">Join Channel</a> | 👤 <a href="https://t.me/arnav_1100" style="color: #00ffcc;">@ARNAV_1100</a>
+<div id="quote">
+  "I don't just play the game... I *break* it. — Arnav"
+  <br>
+  <br>
+  Telegram: <a href="https://t.me/+fKHabYVx_shkMDk1" style="color:#00ffcc">Channel</a> | <a href="https://t.me/arnav_1100" style="color:#00ffcc">@ARNAV_1100</a>
 </div>
 
   </div>  <script>
-    let history = [];
-
-    function goToStep2() {
-      const period = document.getElementById('currentPeriod').value;
-      if (!period || isNaN(period)) {
-        alert('Enter a valid period number');
-        return;
-      }
-      document.getElementById('step1').classList.add('hidden');
-      document.getElementById('step2').classList.remove('hidden');
+    let resultHistory = [];
+    function saveHistory() {
+      const period = document.getElementById('periodInput').value;
+      const rawHistory = document.getElementById('historyInput').value;
+      resultHistory = rawHistory.split(/\s|,/).map(n => parseInt(n)).slice(-20);
+      document.getElementById('setup').style.display = 'none';
+      document.getElementById('predictor').style.display = 'block';
+      document.getElementById('currentPeriod').innerText = period;
+      updatePrediction();
     }
 
-    function saveLast20() {
-      const input = document.getElementById('last20').value;
-      history = input.split(/,|\s+/).map(n => parseInt(n)).filter(n => !isNaN(n)).slice(-20);
-      if (history.length !== 20) {
-        alert('Please enter exactly 20 valid numbers.');
-        return;
-      }
-      document.getElementById('step2').classList.add('hidden');
-      document.getElementById('predictionPanel').classList.remove('hidden');
-      predict();
-    }
-
-    function predict() {
-      const freq = {};
-      history.forEach(num => freq[num] = (freq[num] || 0) + 1);
-      const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
-      const top3 = sorted.slice(0, 3).map(entry => entry[0]);
-      document.getElementById('prediction').innerText = top3.join(' / ');
-      updateHistoryDisplay();
+    function updatePrediction() {
+      const freqMap = {};
+      resultHistory.forEach(n => {
+        freqMap[n] = (freqMap[n] || 0) + 1;
+      });
+      const sorted = Object.entries(freqMap).sort((a, b) => b[1] - a[1]);
+      const top3 = sorted.slice(0, 3).map(([num]) => num);
+      document.getElementById('suggestedNumbers').innerText = top3.join(' / ');
     }
 
     function submitResult() {
-      const actual = parseInt(document.getElementById('actualResult').value);
-      if (isNaN(actual)) {
-        alert('Enter valid number result.');
-        return;
+      const newResult = parseInt(document.getElementById('actualResult').value);
+      if (!isNaN(newResult)) {
+        resultHistory.push(newResult);
+        if (resultHistory.length > 20) resultHistory.shift();
+        updatePrediction();
+        document.getElementById('actualResult').value = '';
+        document.getElementById('resultHistory').innerText = `History: ${resultHistory.join(', ')}`;
       }
-      history.push(actual);
-      if (history.length > 20) history.shift();
-      document.getElementById('actualResult').value = '';
-      predict();
-    }
-
-    function updateHistoryDisplay() {
-      document.getElementById('historyDisplay').innerText = history.join(', ');
     }
   </script></body>
 </html>
