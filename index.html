@@ -5,104 +5,147 @@
   <title>CRACKER 1.0 - Number Sniper</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: url('https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=1770&q=80');
+      background-image: url('your-background-image-url'); /* Replace with actual URL */
       background-size: cover;
-      color: #fff;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      font-family: 'Courier New', Courier, monospace;
+      color: #00ffcc;
+      text-shadow: 0 0 5px #00ffcc;
       padding: 20px;
-      margin: 0;
     }
     .container {
-      max-width: 600px;
+      max-width: 700px;
       margin: auto;
-      background: rgba(0,0,0,0.8);
-      padding: 20px;
-      border-radius: 20px;
-      box-shadow: 0 0 20px #00f2ff;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #00ffcc;
     }
-    h1 {
-      text-align: center;
-      font-size: 2em;
-      color: #00f2ff;
-    }
-    .quote {
-      text-align: center;
-      font-style: italic;
-      margin-bottom: 20px;
-    }
-    label, input, button, textarea {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
+    input, button {
       padding: 10px;
       font-size: 16px;
+      margin: 5px 0;
+      border: none;
+      border-radius: 6px;
+    }
+    input[type="number"] {
+      width: 100px;
     }
     button {
-      background: #00f2ff;
-      color: black;
-      border: none;
+      background-color: #00ffcc;
+      color: #000;
       cursor: pointer;
-      font-weight: bold;
     }
     button:hover {
-      background: #00c6d7;
+      background-color: #00ffaa;
     }
-    .result {
+    .quote {
       font-size: 18px;
+      margin-top: 15px;
       font-weight: bold;
+      color: #ff0066;
+      text-shadow: 0 0 8px #ff0066;
+    }
+    .links {
       margin-top: 20px;
     }
-    .footer {
-      margin-top: 30px;
-      text-align: center;
-      font-size: 14px;
-    }
-    .footer a {
-      color: #00f2ff;
+    .links a {
+      color: #00ffcc;
       text-decoration: none;
+      font-weight: bold;
+    }
+    .result-box {
+      background: #111;
+      border: 1px solid #00ffcc;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>CRACKER 1.0</h1>
-    <div class="quote">
-      "They call me a hacker, I call it precision." — <strong>Arnav</strong>
-    </div><label>Current Period Number (Last 3 Digits)</label>
-<input type="text" id="periodNumber" placeholder="e.g. 865" maxlength="3" />
+    <h1>⚔️ CRACKER 1.0</h1>
+    <div class="quote">“I don't guess, I calculate. — ARNAV”</div><h3>Enter Current Period Number (Last 3 Digits)</h3>
+<input type="number" id="currentPeriod" placeholder="e.g., 865" />
+<button onclick="generateFields()">Enter</button>
 
-<label>Enter Last 20 Period Results (Only Number, one per line)</label>
-<textarea id="lastResults" placeholder="Enter last 20 result digits like:\n2\n7\n6\n0..." rows="10"></textarea>
+<div id="resultInput"></div>
+<div id="predictionBox" class="result-box" style="display:none;"></div>
 
-<button onclick="analyzeResults()">Get Number Shots</button>
-
-<div class="result" id="output"></div>
-
-<div class="footer">
-  <p>Join Telegram: <a href="https://t.me/+fKHabYVx_shkMDk1" target="_blank">CRACKER Channel</a></p>
-  <p>DM: <a href="https://t.me/arnav_1100" target="_blank">@ARNAV_1100</a></p>
+<div class="links">
+  🔗 <a href="https://t.me/+fKHabYVx_shkMDk1" target="_blank">Join Telegram Channel</a><br />
+  👤 <a href="https://t.me/arnav_1100" target="_blank">Contact: @ARNAV_1100</a>
 </div>
 
   </div>  <script>
-    function analyzeResults() {
-      const input = document.getElementById("lastResults").value.trim().split("\n");
-      if (input.length < 20) {
-        document.getElementById("output").innerText = "❌ Enter exactly 20 results.";
+    let results = [];
+    let periodStart = 0;
+
+    function generateFields() {
+      const input = document.getElementById("currentPeriod").value;
+      const container = document.getElementById("resultInput");
+      if (!input || input.length < 3) {
+        alert("Please enter valid period (e.g., 865)");
         return;
       }
-      let frequency = {};
-      input.forEach(n => {
-        if (!frequency[n]) frequency[n] = 0;
-        frequency[n]++;
+      container.innerHTML = "";
+      periodStart = parseInt(input) - 20;
+
+      for (let i = 0; i < 20; i++) {
+        const period = periodStart + i;
+        container.innerHTML += `<label>${period}: <input type='number' id='res_${period}' min='0' max='9'></label><br/>`;
+      }
+      container.innerHTML += `<button onclick='saveHistory()'>Save Results</button>`;
+    }
+
+    function saveHistory() {
+      results = [];
+      for (let i = 0; i < 20; i++) {
+        const val = parseInt(document.getElementById(`res_${periodStart + i}`).value);
+        if (isNaN(val)) {
+          alert("Please fill all 20 results.");
+          return;
+        }
+        results.push(val);
+      }
+      document.getElementById("resultInput").style.display = "none";
+      showPrediction();
+    }
+
+    function showPrediction() {
+      const freq = {};
+      results.forEach(num => {
+        freq[num] = (freq[num] || 0) + 1;
       });
 
-      const sorted = Object.entries(frequency).sort((a, b) => b[1] - a[1]);
-      const topThree = sorted.slice(0, 3).map(e => e[0]);
+      const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+      const top3 = sorted.slice(0, 3).map(e => e[0]);
 
-      document.getElementById("output").innerHTML = `🔫 <strong>Play on:</strong> ${topThree.join(" / ")}<br><br>✅ Strategy: Last 20 result frequency sniper logic.`;
+      const predictionDiv = document.getElementById("predictionBox");
+      predictionDiv.style.display = "block";
+      predictionDiv.innerHTML = `
+        <strong>🎯 Prediction (Number Sniper):</strong><br/>
+        Bet on: <b>${top3.join(" / ")}</b>
+        <br/><br/>
+        ✅ Strategy: Check frequency of digits in last 20 results and bet on top 3 most repeated digits.
+        <br/><br/>
+        Enter Actual Result of Current Period:<br/>
+        <input type='number' id='actualRes' min='0' max='9'>
+        <button onclick='updateHistory()'>Submit</button>
+      `;
+    }
 
-      // clear input fields (optionally)
-      // document.getElementById("lastResults").value = "";
+    function updateHistory() {
+      const val = parseInt(document.getElementById("actualRes").value);
+      if (isNaN(val)) {
+        alert("Please enter actual result.");
+        return;
+      }
+      results.push(val);
+      if (results.length > 20) results.shift();
+      showPrediction();
     }
   </script></body>
 </html>
