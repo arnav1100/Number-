@@ -1,144 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CRACKER 1.0 - Arnav's Hack</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRACKER 1.0 - Number Sniper</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: url('bg.jpg') no-repeat center center fixed;
+      background: url('background.jpg') no-repeat center center fixed;
       background-size: cover;
-      color: white;
-      overflow-x: hidden;
-    }
-    .overlay {
-      background-color: rgba(0, 0, 0, 0.7);
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      z-index: 0;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
     }
     .container {
-      position: relative;
-      z-index: 1;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 16px;
+      padding: 20px;
       max-width: 600px;
-      margin: 50px auto;
-      background: rgba(20, 20, 20, 0.9);
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+      margin: auto;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
     }
-    h1 {
-      text-align: center;
-      font-size: 2em;
-      margin-bottom: 10px;
-      background: linear-gradient(to right, #f0c27b, #4b1248);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .quote {
-      text-align: center;
-      font-style: italic;
-      color: #aaa;
-      margin-bottom: 20px;
-    }
-    input, button {
-      width: 100%;
-      padding: 12px;
+    input, button, textarea {
+      padding: 10px;
       margin: 10px 0;
-      font-size: 1em;
+      width: 100%;
+      border-radius: 8px;
       border: none;
-      border-radius: 10px;
-    }
-    input {
-      background-color: #222;
-      color: white;
+      font-size: 16px;
     }
     button {
-      background-color: #ff6f00;
-      color: white;
-      font-weight: bold;
+      background-color: #00ffcc;
+      color: #000;
       cursor: pointer;
-      transition: background 0.3s;
-    }
-    button:hover {
-      background-color: #e65100;
-    }
-    .footer {
-      text-align: center;
-      margin-top: 30px;
-      font-size: 0.9em;
-    }
-    .footer a {
-      color: #ff9800;
-      text-decoration: none;
     }
     .results {
       margin-top: 20px;
-      padding: 10px;
-      background: #111;
-      border-radius: 10px;
-      max-height: 200px;
-      overflow-y: auto;
+      font-size: 20px;
+    }
+    .quote {
+      font-style: italic;
+      margin-top: 20px;
+      font-size: 18px;
+      color: #ffcc00;
     }
   </style>
 </head>
 <body>
-  <div class="overlay"></div>
   <div class="container">
-    <h1>⚔️ CRACKER 1.0 ⚔️</h1>
-    <p class="quote">"Every pattern can be broken — <strong>Arnav</strong>"</p>
+    <h1>CRACKER 1.0</h1>
+    <p class="quote">"Master the digits, dominate the game." — ARNAV</p>
+    <p>Enter <strong>Current Period Number (Last 3 Digits)</strong>:</p>
+    <input type="number" id="currentPeriod" placeholder="e.g., 865" /><p>Enter <strong>Last 20 Result Numbers</strong> (Separate with space):</p>
+<textarea id="resultInput" rows="4" placeholder="e.g., 2 7 6 0 3 0 8 7 4 1 7 6 0 7 3 7 5 2 1 3"></textarea>
 
-    <input type="text" id="periodInput" placeholder="Enter current period number (3 digits)">
-    <button onclick="startPrediction()">Start Prediction</button>
+<button onclick="analyze()">Save & Predict</button>
 
-    <div class="results" id="resultBox">
-      <p><strong>Prediction Result:</strong> _</p>
-      <p><strong>Last 20 Entries:</strong></p>
-      <div id="historyList"></div>
-    </div>
+<div id="prediction" class="results"></div>
+<div id="history" class="results"></div>
+<div class="quote">
+  Telegram: <a href="https://t.me/arnav_1100" style="color:#0ff">@ARNAV_1100</a><br>
+  Channel: <a href="https://t.me/+fKHabYVx_shkMDk1" style="color:#0ff">Join Here</a>
+</div>
 
-    <button onclick="markResult('hit')">Hit ✅</button>
-    <button onclick="markResult('miss')">Miss ❌</button>
+  </div>  <script>
+    let resultHistory = [];
 
-    <div class="footer">
-      🔗 <a href="https://t.me/+fKHabYVx_shkMDk1" target="_blank">Join Telegram Channel</a><br>
-      👤 <a href="https://t.me/arnav_1100" target="_blank">@ARNAV_1100</a>
-    </div>
-  </div>
+    function analyze() {
+      const current = document.getElementById("currentPeriod").value;
+      const input = document.getElementById("resultInput").value.trim();
+      const results = input.split(" ").map(Number);
 
-  <script>
-    let results = [];
+      if (results.length !== 20) {
+        alert("Please enter exactly 20 numbers.");
+        return;
+      }
 
-    function startPrediction() {
-      const period = document.getElementById('periodInput').value;
-      if (period.length !== 3) return alert("Enter a 3-digit period number");
-      const prediction = getPrediction(period);
-      document.getElementById('resultBox').querySelector('p').innerText = `Prediction Result: ${prediction}`;
+      resultHistory = results;
+      document.getElementById("resultInput").value = "";
+
+      let freq = {};
+      results.forEach(num => {
+        freq[num] = (freq[num] || 0) + 1;
+      });
+
+      const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+      const top3 = sorted.slice(0, 3).map(e => e[0]);
+
+      document.getElementById("prediction").innerHTML =
+        `<h2>🔥 Suggested Number Shots:</h2><strong>${top3.join(" / ")}</strong>`;
+
+      document.getElementById("history").innerText = `Saved History (Latest 20):\n${resultHistory.join(" → ")}`;
     }
-
-    function getPrediction(period) {
-      const last = parseInt(period[2]);
-      return [0, 1, 5, 8, 9].includes(last) ? "Number Shot: BIG" : "Number Shot: SMALL";
-    }
-
-    function markResult(status) {
-      const period = document.getElementById('periodInput').value;
-      const number = prompt("Enter result number for period " + period);
-      if (number === null || number === '') return;
-      results.push(`${period} → ${number} (${status.toUpperCase()})`);
-      if (results.length > 20) results.shift();
-      showHistory();
-    }
-
-    function showHistory() {
-      document.getElementById('historyList').innerHTML = results.map(r => `<div>• ${r}</div>`).join('');
-    }
-  </script>
-</body>
+  </script></body>
 </html>
