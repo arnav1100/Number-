@@ -1,151 +1,88 @@
-<!DOCTYPE html><html lang="en">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CRACKER 1.0 - Number Sniper</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Number Clash — Demo</title>
   <style>
-    body {
-      background-image: url('your-background-image-url'); /* Replace with actual URL */
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      font-family: 'Courier New', Courier, monospace;
-      color: #00ffcc;
-      text-shadow: 0 0 5px #00ffcc;
-      padding: 20px;
-    }
-    .container {
-      max-width: 700px;
-      margin: auto;
-      background-color: rgba(0, 0, 0, 0.8);
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px #00ffcc;
-    }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-      margin: 5px 0;
-      border: none;
-      border-radius: 6px;
-    }
-    input[type="number"] {
-      width: 100px;
-    }
-    button {
-      background-color: #00ffcc;
-      color: #000;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #00ffaa;
-    }
-    .quote {
-      font-size: 18px;
-      margin-top: 15px;
-      font-weight: bold;
-      color: #ff0066;
-      text-shadow: 0 0 8px #ff0066;
-    }
-    .links {
-      margin-top: 20px;
-    }
-    .links a {
-      color: #00ffcc;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .result-box {
-      background: #111;
-      border: 1px solid #00ffcc;
-      padding: 15px;
-      border-radius: 8px;
-      margin-top: 10px;
-    }
+    body{font-family:Arial,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:20px;background:#0f1724;color:#e6eef8}
+    .card{background:#081127;padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,.6);width:100%;max-width:420px}
+    h1{margin:0 0 8px;font-size:20px}
+    .row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+    button.num{flex:1 0 22%;padding:14px;border-radius:8px;border:none;font-weight:700;font-size:18px;background:#0b63ff;color:white}
+    .playBtn{width:100%;padding:12px;border-radius:8px;border:none;margin-top:12px;background:#1f8b3f;color:white;font-weight:700}
+    .info{margin-top:12px;background:#071428;padding:10px;border-radius:8px;color:#a8c0d8}
+    .result{margin-top:12px;padding:12px;border-radius:8px;font-weight:700;text-align:center}
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>⚔️ CRACKER 1.0</h1>
-    <div class="quote">“I don't guess, I calculate. — ARNAV”</div><h3>Enter Current Period Number (Last 3 Digits)</h3>
-<input type="number" id="currentPeriod" placeholder="e.g., 865" />
-<button onclick="generateFields()">Enter</button>
+  <div class="card">
+    <h1>Number Clash — Demo</h1>
+    <div id="userInfo" style="font-size:13px;color:#9fc0ff">Loading...</div>
 
-<div id="resultInput"></div>
-<div id="predictionBox" class="result-box" style="display:none;"></div>
+    <p style="margin-top:12px">Pick your number (0–9):</p>
+    <div class="row" id="numbers">
+      <!-- buttons populated by JS -->
+    </div>
 
-<div class="links">
-  🔗 <a href="https://t.me/+fKHabYVx_shkMDk1" target="_blank">Join Telegram Channel</a><br />
-  👤 <a href="https://t.me/arnav_1100" target="_blank">Contact: @ARNAV_1100</a>
-</div>
+    <button class="playBtn" id="playBtn" disabled>Pick a number first</button>
 
-  </div>  <script>
-    let results = [];
-    let periodStart = 0;
+    <div class="info" id="info">Tip: This is a demo single-player system vs Target number.</div>
+    <div id="out" class="result"></div>
+  </div>
 
-    function generateFields() {
-      const input = document.getElementById("currentPeriod").value;
-      const container = document.getElementById("resultInput");
-      if (!input || input.length < 3) {
-        alert("Please enter valid period (e.g., 865)");
-        return;
-      }
-      container.innerHTML = "";
-      periodStart = parseInt(input) - 20;
+<script>
+  // Telegram WebApp ready (works inside Telegram)
+  if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.ready();
+    const t = window.Telegram.WebApp;
+    const init = t.initDataUnsafe || {};
+    const user = init.user || null;
+    document.getElementById('userInfo').innerText = user ? `Player: @${user.username || user.first_name}` : 'Player: Guest';
+  } else {
+    document.getElementById('userInfo').innerText = 'Player: (not in Telegram) — open via Telegram bot';
+  }
 
-      for (let i = 0; i < 20; i++) {
-        const period = periodStart + i;
-        container.innerHTML += `<label>${period}: <input type='number' id='res_${period}' min='0' max='9'></label><br/>`;
-      }
-      container.innerHTML += `<button onclick='saveHistory()'>Save Results</button>`;
+  let chosen = null;
+  const numbersDiv = document.getElementById('numbers');
+  for (let i=0;i<10;i++){
+    const b = document.createElement('button');
+    b.innerText = i;
+    b.className = 'num';
+    b.onclick = ()=> {
+      chosen = i;
+      document.querySelectorAll('button.num').forEach(x=>x.style.opacity=0.5);
+      b.style.opacity = 1;
+      document.getElementById('playBtn').disabled = false;
+      document.getElementById('out').innerText = '';
+    };
+    numbersDiv.appendChild(b);
+  }
+
+  document.getElementById('playBtn').onclick = ()=>{
+    if (chosen === null) return;
+    // simulate stake deduction here (frontend demo)
+    // Generate target:
+    const target = Math.floor(Math.random()*10);
+    // compute distances:
+    const dChosen = Math.abs(target - chosen);
+    // For demo, opponent is system pick (random)
+    const opponent = Math.floor(Math.random()*10);
+    const dOpp = Math.abs(target - opponent);
+    let outEl = document.getElementById('out');
+    let text = `🎯 Target: ${target}\nYou: ${chosen} (dist ${dChosen})\nOpponent: ${opponent} (dist ${dOpp})\n`;
+    if (dChosen < dOpp) {
+      text += "🏆 You Win! (+₹18 simulated)";
+      outEl.style.background = '#153a1c'; outEl.style.color='#b9f0b8';
+    } else if (dOpp < dChosen) {
+      text += "❌ You Lost (Opponent closer).";
+      outEl.style.background = '#34151a'; outEl.style.color='#ffb6b6';
+    } else {
+      text += "🔁 Tie! Replay (no deduction).";
+      outEl.style.background = '#30345a'; outEl.style.color='#dcdcff';
     }
-
-    function saveHistory() {
-      results = [];
-      for (let i = 0; i < 20; i++) {
-        const val = parseInt(document.getElementById(`res_${periodStart + i}`).value);
-        if (isNaN(val)) {
-          alert("Please fill all 20 results.");
-          return;
-        }
-        results.push(val);
-      }
-      document.getElementById("resultInput").style.display = "none";
-      showPrediction();
-    }
-
-    function showPrediction() {
-      const freq = {};
-      results.forEach(num => {
-        freq[num] = (freq[num] || 0) + 1;
-      });
-
-      const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
-      const top3 = sorted.slice(0, 3).map(e => e[0]);
-
-      const predictionDiv = document.getElementById("predictionBox");
-      predictionDiv.style.display = "block";
-      predictionDiv.innerHTML = `
-        <strong>🎯 Prediction (Number Sniper):</strong><br/>
-        Bet on: <b>${top3.join(" / ")}</b>
-        <br/><br/>
-        ✅ Strategy: Check frequency of digits in last 20 results and bet on top 3 most repeated digits.
-        <br/><br/>
-        Enter Actual Result of Current Period:<br/>
-        <input type='number' id='actualRes' min='0' max='9'>
-        <button onclick='updateHistory()'>Submit</button>
-      `;
-    }
-
-    function updateHistory() {
-      const val = parseInt(document.getElementById("actualRes").value);
-      if (isNaN(val)) {
-        alert("Please enter actual result.");
-        return;
-      }
-      results.push(val);
-      if (results.length > 20) results.shift();
-      showPrediction();
-    }
-  </script></body>
+    outEl.innerText = text;
+  };
+</script>
+</body>
 </html>
